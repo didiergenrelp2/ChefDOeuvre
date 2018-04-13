@@ -28,14 +28,14 @@ public class UtilisateurDAO {
 		this.dataSource = jdbcTemplate.getDataSource();
 	}
 	/**
-	 * Rechercher les utilisateurs avec un critère de recherche sur tous les champs
+	 * Filtrer les utilisateurs avec un critère de recherche sur tous les champs
 	 * 
-	 * @param filtreUtilisateur
+	 * @param rechercheUtilisateur
 	 * @return
 	 * @throws Exception
 	 */
-	public List <Utilisateur> filtreUtilisateur(String filtreUtilisateur) throws Exception{
-		List <Utilisateur> utilisateursTries = new ArrayList<Utilisateur>();
+	public List <Utilisateur> filtrerUtilisateur(String rechercheUtilisateur) throws Exception{
+		List <Utilisateur> utilisateurFiltre = new ArrayList<Utilisateur>();
 		Utilisateur utilisateur;
 		PreparedStatement pstmt = null;
 		ResultSet rs;
@@ -50,10 +50,10 @@ public class UtilisateurDAO {
 					+ "OR idrh LIKE ? "
 					+ "OR fonction LIKE ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
-			pstmt.setString(1, "%" + filtreUtilisateur + "%");
-			pstmt.setString(2, "%" + filtreUtilisateur + "%");
-			pstmt.setString(3, "%" + filtreUtilisateur + "%");
-			pstmt.setString(4, "%" + filtreUtilisateur + "%");
+			pstmt.setString(1, "%" + rechercheUtilisateur + "%");
+			pstmt.setString(2, "%" + rechercheUtilisateur + "%");
+			pstmt.setString(3, "%" + rechercheUtilisateur + "%");
+			pstmt.setString(4, "%" + rechercheUtilisateur + "%");
 			
 			// Log info
 			logSQL(pstmt);
@@ -62,7 +62,7 @@ public class UtilisateurDAO {
 			// resultat requete
 			while (rs.next()) {
 				utilisateur = recupererUtilisateurRS(rs);
-				utilisateursTries.add(utilisateur);
+				utilisateurFiltre.add(utilisateur);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -72,7 +72,7 @@ public class UtilisateurDAO {
 			pstmt.close();
 		}
 
-		return utilisateursTries;
+		return utilisateurFiltre;
 		
 	}
 //	TODO Import enum

@@ -3,6 +3,8 @@ package co.simplon.chefdoeuvre.modele;
 import java.sql.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -33,7 +35,7 @@ public class Materiel {
 	// private int quantite;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_bureau", nullable = false) // TODO mettre bureau_id pour ne pas confordre ?
+	@JoinColumn(name = "id_bureau", nullable = true)
 	private Bureau bureau;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
@@ -68,7 +70,8 @@ public class Materiel {
 	public void setId_materiel(Long id_materiel) {
 		this.id_materiel = id_materiel;
 	}
-
+	
+	@Enumerated(EnumType.STRING)
 	public Domaine getDomaine() {
 		return domaine;
 	}
@@ -132,7 +135,8 @@ public class Materiel {
 	public void setDate_fin_garantie(Date date_fin_garantie) {
 		this.date_fin_garantie = date_fin_garantie;
 	}
-
+	
+	@Enumerated(EnumType.STRING)
 	public Etat getEtat() {
 		return etat;
 	}

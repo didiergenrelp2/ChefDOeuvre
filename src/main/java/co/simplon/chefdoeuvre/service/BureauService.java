@@ -20,10 +20,6 @@ public class BureauService {
 		return bureauDepot.findOne(id_bureau);
 	}
 
-	// public void supprimerBureau(Long id_bureau) {
-	// bureauDepot.delete(id_bureau);
-	// }
-	//
 	// public Bureau ajouterBureau(Bureau bureau) throws Exception {
 	// return bureauDepot.save(bureau);
 	// }
@@ -32,10 +28,13 @@ public class BureauService {
 	// {
 	// return bureauDepot.save(bureau);
 	// }
-
-	public void supprimerTousLesBureaux() {
-		bureauDepot.deleteAll();
-		;
-	}
+	//
+	// public void supprimerBureau(Long id_bureau) {
+	// bureauDepot.delete(id_bureau);
+	// }
+	// public void supprimerTousLesBureaux() {
+	// bureauDepot.deleteAll();
+	// ;
+	// }
 
 }

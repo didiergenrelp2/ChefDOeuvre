@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import co.simplon.chefdoeuvre.modele.Bureau;
 import co.simplon.chefdoeuvre.modele.Materiel;
 
 @Repository
@@ -27,15 +28,67 @@ public class BureauDAO {
 	public BureauDAO(JdbcTemplate jdbcTemplate) {
 		this.dataSource = jdbcTemplate.getDataSource();
 	}
-
 	/**
-	 * Rechercher les materiels liées à une bureau
+	 * Filtrer le bureau avec un critère de recherche sur tous les champs
+	 *
+	 * @param rechercheBureau
+	 * @return
+	 * @throws Exception
+	 */
+	public List<Bureau> filtrerBureau(String rechercheBureau) throws Exception {
+		List<Bureau> bureauFiltre = new ArrayList<Bureau>();
+
+		Bureau bureau;
+		PreparedStatement pstmt = null;
+		ResultSet rs;
+		String sql;
+
+		try {
+			// Requete SQL
+			sql = "SELECT * "
+					+ "FROM bureau "
+					+ "WHERE nom_bureau LIKE ? "
+					+ "OR code_regate LIKE ? "
+					+ "OR adresse LIKE ? "
+					+ "OR code_postal LIKE ? "
+					+ "OR ville LIKE ? "
+					+ "OR telephone LIKE ? ";
+			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt.setString(1, "%" + rechercheBureau + "%");
+			pstmt.setString(2, "%" + rechercheBureau + "%");
+			pstmt.setString(3, "%" + rechercheBureau + "%");
+			pstmt.setString(4, "%" + rechercheBureau + "%");
+			pstmt.setString(5, "%" + rechercheBureau + "%");
+			pstmt.setString(6, "%" + rechercheBureau + "%");
+
+			// Log info
+			logSQL(pstmt);
+			// Lancement requete
+			rs = pstmt.executeQuery();
+			// resultat requete
+			while (rs.next()) {
+				bureau = recupererBureauRS(rs);
+				bureauFiltre.add(bureau);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error("SQL Error !:" + pstmt.toString(), e);
+			throw e;
+		} finally {
+			pstmt.close();
+		}
+
+		return bureauFiltre;
+	}
+	
+	/**
+	 * Rechercher le materiel lié à un bureau
 	 * 
 	 * @param id
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Materiel> recupererMaterielDeBureau(Long id) throws Exception {
+	public List<Materiel> recupererMaterielDuBureau(Long id) throws Exception {
 		Materiel materiel;
 		PreparedStatement pstmt = null;
 		ResultSet rs;
@@ -43,11 +96,15 @@ public class BureauDAO {
 		ArrayList<Materiel> listeMateriel = new ArrayList<Materiel>();
 
 		try {
-			// TODO utilité table jointure ?
+			// TODO modifier requete
 			// Requete SQL
-			sql = " SELECT materiel.*\r\n" + "  FROM materiel\r\n" + "INNER JOIN bureau_materiel\r\n"
-					+ "  ON materiel.id_materiel = bureau_materiel.id_materiel\r\n" + "INNER JOIN bureau\r\n"
-					+ "  ON bureau_materiel.id_bureau = bureau.id_bureau\r\n" + "  WHERE bureau.id_bureau = ?;";
+			sql = 	"SELECT materiel.*\r\n" 
+					+ "FROM materiel\r\n" 
+//					+ "INNER JOIN bureau_materiel\r\n"
+//					+ "ON materiel.id_materiel = bureau_materiel.id_materiel\r\n" 
+//					+ "INNER JOIN bureau\r\n"
+//					+ "ON bureau_materiel.id_bureau = bureau.id_bureau\r\n" 
+					+ "WHERE bureau.id_bureau = ?;";
 
 			pstmt = dataSource.getConnection().prepareStatement(sql);
 			pstmt.setLong(1, id);
@@ -81,6 +138,19 @@ public class BureauDAO {
 		log.debug(sql);
 	}
 
+	private Bureau recupererBureauRS(ResultSet rs) throws SQLException {
+		Bureau bureau = new Bureau();
+		bureau.setId_bureau(rs.getLong("id_bureau"));
+		bureau.setNom_bureau(rs.getString("nom_bureau"));
+		bureau.setCode_regate(rs.getLong("code_regate"));
+		bureau.setAdresse(rs.getString("adresse"));
+		bureau.setCode_postal(rs.getLong("code_postal"));
+		bureau.setVille(rs.getString("ville"));
+		bureau.setTelephone(rs.getString("telephone"));
+
+		return bureau;
+	}
+	
 	private Materiel recupererMaterielRS(ResultSet rs) throws SQLException {
 		Materiel materiel = new Materiel();
 

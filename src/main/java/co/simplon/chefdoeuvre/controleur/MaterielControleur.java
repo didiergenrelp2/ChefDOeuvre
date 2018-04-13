@@ -47,11 +47,11 @@ public class MaterielControleur {
 	 * @return
 	 * @throws Exception
 	 */
-	@GetMapping(path = "/materiels/{recherche}")
-	public ResponseEntity<List<Materiel>> recupererMaterielTrie(@PathVariable(value = "recherche") String recherche)
+	@GetMapping(path = "/materiels/{filtre}")
+	public ResponseEntity<List<Materiel>> filtrerMateriel(@PathVariable(value = "filtre") String filtre)
 			throws Exception {
 
-		List<Materiel> listeMateriel = materielDAO.recupererMaterielTrie(recherche);
+		List<Materiel> listeMateriel = materielDAO.filtrerMateriel(filtre);
 		if (listeMateriel == null) {
 			return ResponseEntity.notFound().build();
 		}
@@ -71,76 +71,20 @@ public class MaterielControleur {
 	}
 
 	// exemple en SQL :
-	// DELETE FROM materiel WHERE id_materiel=3;
-	@DeleteMapping(path = "/materiel/{id}")
-	ResponseEntity<Materiel> supprimerMateriel(@PathVariable(value = "id") long id_materiel) throws Exception {
-		Materiel materiel = materielService.recupererMateriel(id_materiel);
-		if (materiel == null)
-			return ResponseEntity.notFound().build();
-
-		materielService.supprimerMateriel(id_materiel);
-		return ResponseEntity.ok().build();
-	}
-
-	/**
-	 * Supprimer un materiel du bureau
-	 * 
-	 * @param id_materiel_bureau
-	 * @param id_materiel_materiel
-	 * @return
-	 * @throws Exception
-	 */
-
-	@DeleteMapping(path = "/bureau/{id_bureau}/suppMateriel/{id_materiel}")
-	public ResponseEntity<?> supprimerMaterielDuBureau(@PathVariable(value = "id_bureau") long id_bureau,
-			@PathVariable(value = "id_materiel") long id_materiel) throws Exception {
-		try {
-			materielDAO.supprimerMaterielDuBureau(id_bureau, id_materiel);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
-
-		return ResponseEntity.status(HttpStatus.OK).body(null);
-	}
-
-	// TODO modifier le comm
-	// exemple en SQL :
-	// INSERT INTO materiel (`marque`, `modele`, `type`, `calibre`, `numero_serie`,
-	// `infos_complementaire`) VALUES ('Berretta', '93', 'Pistolet', '9mm',
-	// '1235TYU678', '');
+	// INSERT IGNORE INTO materiel (`id_materiel`,`domaine`, `type`, `marque`,
+	// `modele`, `numero_serie`, `code_parc`, `code_article`, `date_fin_garantie`)
+	// VALUES ('2', 'Réseaux', 'routeur', '3COM', 'ER25', '65433HY8', 'B32154',
+	// '234321','2015-04-12 19:05:00');
 	@PostMapping(path = "/materiels")
 	Materiel ajouterMateriel(@Valid @RequestBody Materiel materiel) throws Exception {
 		return materielService.ajouterMateriel(materiel);
-	}
-
-	/**
-	 * Lier le materiel au bureau
-	 * 
-	 * @param bureauLien
-	 * @return
-	 * @throws Exception
-	 */
-	// TODO lier le matos a la table bureau
-	@PostMapping(path = "/bureau/lierMateriel")
-	ResponseEntity<?> lierMaterielAuBureau(@Valid @RequestBody Bureau bureau, @Valid @RequestBody Materiel materiel)
-			throws Exception {
-		long id_bureau = bureau.getId_bureau();
-		long id_materiel = materiel.getId_materiel();
-		try {
-			materielDAO.lierMaterielAuBureau(id_bureau, id_materiel);
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
-
-		return ResponseEntity.status(HttpStatus.OK).body(null);
-
 	}
 
 	// exemple en SQL :
 	// UPDATE materiel SET `marque` = "Lexmark", `modele` = "360DN" WHERE
 	// id_materiel = 3;
 	@PutMapping(path = "/materiel/{id}")
-	ResponseEntity<Materiel> miseAJourMateriel(@PathVariable(value = "id") long id_materiel,
+	ResponseEntity<Materiel> mettreAJourMateriel(@PathVariable(value = "id") long id_materiel,
 			@Valid @RequestBody Materiel materiel) throws Exception {
 		Materiel materielAModifier = materielService.recupererMateriel(id_materiel);
 		if (materielAModifier == null)
@@ -175,4 +119,61 @@ public class MaterielControleur {
 		Materiel materielModifie = materielService.miseAJourMateriel(id_materiel, materielAModifier);
 		return ResponseEntity.ok(materielModifie);
 	}
+
+	/**
+	 * Lier le materiel au bureau
+	 * 
+	 * @param bureau
+	 * @return
+	 * @throws Exception
+	 */
+	// TODO lier le matos a la table bureau
+	@PostMapping(path = "/bureau/lierMateriel")
+	ResponseEntity<?> poserMaterielDansBureau(@Valid @RequestBody Bureau bureau, @Valid @RequestBody Materiel materiel)
+			throws Exception {
+		long id_bureau = bureau.getId_bureau();
+		long id_materiel = materiel.getId_materiel();
+		try {
+			materielDAO.poserMaterielDansBureau(id_bureau, id_materiel);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+
+	}
+
+	/**
+	 * Supprimer un materiel du bureau
+	 * 
+	 * @param id_materiel_bureau
+	 * @param id_materiel_materiel
+	 * @return
+	 * @throws Exception
+	 */
+	// TODO possible en mettant une fenetre de demande de confirmation ?
+	@DeleteMapping(path = "/bureau/{id_bureau}/suppMateriel/{id_materiel}")
+	public ResponseEntity<?> supprimerMaterielDuBureau(@PathVariable(value = "id_bureau") long id_bureau,
+			@PathVariable(value = "id_materiel") long id_materiel) throws Exception {
+		try {
+			materielDAO.supprimerMaterielDuBureau(id_bureau, id_materiel);
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+
+		return ResponseEntity.status(HttpStatus.OK).body(null);
+	}
+
+	// exemple en SQL :
+	// DELETE FROM materiel WHERE id_materiel=3;
+	@DeleteMapping(path = "/materiel/{id}")
+	ResponseEntity<Materiel> supprimerMateriel(@PathVariable(value = "id") long id_materiel) throws Exception {
+		Materiel materiel = materielService.recupererMateriel(id_materiel);
+		if (materiel == null)
+			return ResponseEntity.notFound().build();
+
+		materielService.supprimerMateriel(id_materiel);
+		return ResponseEntity.ok().build();
+	}
+
 }

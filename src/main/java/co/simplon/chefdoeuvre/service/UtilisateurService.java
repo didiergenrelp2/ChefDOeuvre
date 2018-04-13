@@ -28,7 +28,7 @@ public class UtilisateurService {
 		return utilisateurDepot.save(utilisateur);
 	}
 
-	public Utilisateur miseAJourUtilisateur(Long id_utilisateur, Utilisateur utilisateur) throws Exception {
+	public Utilisateur mettreAJourUtilisateur(Long id_utilisateur, Utilisateur utilisateur) throws Exception {
 		return utilisateurDepot.save(utilisateur);
 	}
 

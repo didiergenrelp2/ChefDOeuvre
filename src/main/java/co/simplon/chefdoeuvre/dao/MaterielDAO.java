@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import co.simplon.chefdoeuvre.modele.Domaine;
 import co.simplon.chefdoeuvre.modele.Materiel;
 
 @Repository
@@ -30,14 +29,14 @@ public class MaterielDAO {
 	}
 
 	/**
-	 * Recuperer les materiels avec un critère de recherche sur tous les champs
+	 * Filtrer le materiel avec un critère de recherche sur tous les champs
 	 *
 	 * @param rechercheMateriel
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Materiel> recupererMaterielTrie(String rechercheMateriel) throws Exception {
-		List<Materiel> materielsTriees = new ArrayList<Materiel>();
+	public List<Materiel> filtrerMateriel(String rechercheMateriel) throws Exception {
+		List<Materiel> materielFiltre = new ArrayList<Materiel>();
 
 		Materiel materiel;
 		PreparedStatement pstmt = null;
@@ -48,7 +47,7 @@ public class MaterielDAO {
 			// Requete SQL
 			sql = "SELECT * "
 					+ "FROM materiel "
-					+ "WHERE domain LIKE ? "
+					+ "WHERE domaine LIKE ? "
 					+ "OR marque LIKE ? "
 					+ "OR modele LIKE ? "
 					+ "OR type LIKE ? "
@@ -75,7 +74,7 @@ public class MaterielDAO {
 			// resultat requete
 			while (rs.next()) {
 				materiel = recupererMaterielRS(rs);
-				materielsTriees.add(materiel);
+				materielFiltre.add(materiel);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,7 +84,7 @@ public class MaterielDAO {
 			pstmt.close();
 		}
 
-		return materielsTriees;
+		return materielFiltre;
 	}
 
 	/**
@@ -95,7 +94,7 @@ public class MaterielDAO {
 	 * @param id_materiel
 	 * @throws Exception
 	 */
-	public void lierMaterielAuBureau(long id_bureau, long id_materiel) throws Exception {
+	public void poserMaterielDansBureau(long id_bureau, long id_materiel) throws Exception {
 		PreparedStatement pstmt = null;
 		String sql;
 		try {
@@ -133,7 +132,7 @@ public class MaterielDAO {
 
 		try {
 			// Requete SQL
-			sql = " DELETE FROM bureau_materiel WHERE `id_bureau`=? AND `id_materiel`=? ";
+			sql = " DELETE FROM materiel WHERE `id_bureau`=? AND `id_materiel`=? ";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
 			pstmt.setLong(1, id_bureau);
 			pstmt.setLong(2, id_materiel);
@@ -164,6 +163,7 @@ public class MaterielDAO {
 		Materiel materiel = new Materiel();
 
 		// TODO chercher commment importer une enum
+//		TODO penser à rajouter les domaines dans le data.sql après modification
 		materiel.setId_materiel(rs.getLong("id"));
 //		materiel.setDomaine(rs.getString("domaine"));
 		materiel.setType(rs.getString("type"));

@@ -1,6 +1,8 @@
 package co.simplon.chefdoeuvre.modele;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -20,7 +22,7 @@ public class Utilisateur {
 	private String idrh;
 	private Fonction fonction;
 	private String mdp;
-
+	
 	public Utilisateur() {
 
 	}
@@ -67,6 +69,7 @@ public class Utilisateur {
 		this.idrh = idrh;
 	}
 
+	@Enumerated(EnumType.STRING)
 	public Fonction getFonction() {
 		return fonction;
 	}

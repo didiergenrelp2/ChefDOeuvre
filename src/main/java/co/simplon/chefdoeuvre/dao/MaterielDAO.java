@@ -45,16 +45,16 @@ public class MaterielDAO {
 
 		try {
 			// Requete SQL
-			sql = "SELECT * "
-					+ "FROM materiel "
-					+ "WHERE domaine LIKE ? "
-					+ "OR marque LIKE ? "
+			sql = "SELECT * " 
+					+ "FROM materiel " 
+					+ "WHERE domaine LIKE ? " 
+					+ "OR marque LIKE ? " 
 					+ "OR modele LIKE ? "
-					+ "OR type LIKE ? "
-					+ "OR code_parc LIKE ? "
-					+ "OR numero_serie LIKE ? "
+					+ "OR type LIKE ? " 
+					+ "OR code_parc LIKE ? " 
+					+ "OR numero_serie LIKE ? " 
 					+ "OR code_article LIKE ? "
-					+ "OR date_fin_garantie LIKE ? "
+					+ "OR date_fin_garantie LIKE ? " 
 					+ "OR etat LIKE ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
 			pstmt.setString(1, "%" + rechercheMateriel + "%");
@@ -99,12 +99,11 @@ public class MaterielDAO {
 		String sql;
 		try {
 
-			// TODO vérifier fonctionnement
 			// Requete SQL
-			sql = "INSERT INTO materiel WHERE id_materiel = ? VALUES id_bureau = ? ;";
+			sql = "UPDATE materiel SET id_bureau = ? WHERE id_materiel = ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
-			pstmt.setLong(1, id_materiel);
-			pstmt.setLong(2, id_bureau);
+			pstmt.setLong(1, id_bureau);
+			pstmt.setLong(2, id_materiel);
 			// Log info
 			logSQL(pstmt);
 			// Lancement requete
@@ -132,10 +131,9 @@ public class MaterielDAO {
 
 		try {
 			// Requete SQL
-			sql = " DELETE FROM materiel WHERE `id_bureau`=? AND `id_materiel`=? ";
+			sql = "UPDATE materiel SET id_bureau = null WHERE id_materiel = ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
-			pstmt.setLong(1, id_bureau);
-			pstmt.setLong(2, id_materiel);
+			pstmt.setLong(1, id_materiel);
 			// Execution requete
 			int resultat = pstmt.executeUpdate();
 			if (resultat != 1) {
@@ -163,9 +161,9 @@ public class MaterielDAO {
 		Materiel materiel = new Materiel();
 
 		// TODO chercher commment importer une enum
-//		TODO penser à rajouter les domaines dans le data.sql après modification
+		// TODO penser à rajouter les domaines dans le data.sql après modification
 		materiel.setId_materiel(rs.getLong("id"));
-//		materiel.setDomaine(rs.getString("domaine"));
+		// materiel.setDomaine(rs.getString("domaine"));
 		materiel.setType(rs.getString("type"));
 		materiel.setMarque(rs.getString("marque"));
 		materiel.setModele(rs.getString("modele"));
@@ -173,7 +171,7 @@ public class MaterielDAO {
 		materiel.setCode_parc(rs.getString("code_parc"));
 		materiel.setCode_article(rs.getString("code_article"));
 		materiel.setDate_fin_garantie(rs.getDate("date_fin_garantie"));
-//		materiel.setEtat(rs.getString("etat"));
+		// materiel.setEtat(rs.getString("etat"));
 
 		return materiel;
 	}

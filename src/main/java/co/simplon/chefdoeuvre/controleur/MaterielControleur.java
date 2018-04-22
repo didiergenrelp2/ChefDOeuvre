@@ -128,7 +128,7 @@ public class MaterielControleur {
 	 * @throws Exception
 	 */
 	// TODO lier le matos a la table bureau
-	@PostMapping(path = "/bureau/lierMateriel")
+	@PutMapping(path = "/bureau/poserMateriel")
 	ResponseEntity<?> poserMaterielDansBureau(@Valid @RequestBody Bureau bureau, @Valid @RequestBody Materiel materiel)
 			throws Exception {
 		long id_bureau = bureau.getId_bureau();
@@ -152,7 +152,7 @@ public class MaterielControleur {
 	 * @throws Exception
 	 */
 	// TODO possible en mettant une fenetre de demande de confirmation ?
-	@DeleteMapping(path = "/bureau/{id_bureau}/suppMateriel/{id_materiel}")
+	@PutMapping(path = "/bureau/{id_bureau}/retirerMateriel/{id_materiel}")
 	public ResponseEntity<?> supprimerMaterielDuBureau(@PathVariable(value = "id_bureau") long id_bureau,
 			@PathVariable(value = "id_materiel") long id_materiel) throws Exception {
 		try {

@@ -98,13 +98,9 @@ public class BureauDAO {
 		try {
 			// TODO modifier requete
 			// Requete SQL
-			sql = 	"SELECT materiel.*\r\n" 
-					+ "FROM materiel\r\n" 
-//					+ "INNER JOIN bureau_materiel\r\n"
-//					+ "ON materiel.id_materiel = bureau_materiel.id_materiel\r\n" 
-//					+ "INNER JOIN bureau\r\n"
-//					+ "ON bureau_materiel.id_bureau = bureau.id_bureau\r\n" 
-					+ "WHERE bureau.id_bureau = ?;";
+			sql = 	"SELECT * " 
+					+ "FROM materiel " 
+					+ "WHERE id_bureau = ?;";
 
 			pstmt = dataSource.getConnection().prepareStatement(sql);
 			pstmt.setLong(1, id);

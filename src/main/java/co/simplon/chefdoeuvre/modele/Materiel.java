@@ -1,6 +1,8 @@
 package co.simplon.chefdoeuvre.modele;
 
-import java.sql.Date;
+import java.util.Date;
+
+//import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -14,13 +16,23 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import co.simplon.chefdoeuvre.util.JSONMaterielDeserializer;
+import co.simplon.chefdoeuvre.util.JSONMaterielSerializer;
+
 @Entity
+//@Audited //Audite les modifications sur la table
 @Table(name = "materiel")
+@JsonDeserialize(using = JSONMaterielDeserializer.class)
+@JsonSerialize(using = JSONMaterielSerializer.class)
 public class Materiel {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id_materiel;
-
+	@Enumerated
 	private Domaine domaine;
 	@NotNull
 	private String type;
@@ -36,6 +48,7 @@ public class Materiel {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_bureau", nullable = true)
+	@JsonBackReference
 	private Bureau bureau;
 
 	// @ManyToOne(fetch = FetchType.LAZY)

@@ -128,11 +128,9 @@ public class MaterielControleur {
 	 * @throws Exception
 	 */
 	// TODO lier le matos a la table bureau
-	@PutMapping(path = "/bureau/poserMateriel")
-	ResponseEntity<?> poserMaterielDansBureau(@Valid @RequestBody Bureau bureau, @Valid @RequestBody Materiel materiel)
+	@PutMapping(path = "/bureau/{id_bureau}/poserMateriel")
+	ResponseEntity<?> poserMaterielDansBureau(@PathVariable ("id_bureau") Long id_bureau, @Valid @RequestBody Long id_materiel)
 			throws Exception {
-		long id_bureau = bureau.getId_bureau();
-		long id_materiel = materiel.getId_materiel();
 		try {
 			materielDAO.poserMaterielDansBureau(id_bureau, id_materiel);
 		} catch (Exception e) {

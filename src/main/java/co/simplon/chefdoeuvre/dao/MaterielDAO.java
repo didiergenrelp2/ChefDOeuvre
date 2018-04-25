@@ -31,11 +31,11 @@ public class MaterielDAO {
 	/**
 	 * Filtrer le materiel avec un critère de recherche sur tous les champs
 	 *
-	 * @param rechercheMateriel
+	 * @param filtre
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Materiel> filtrerMateriel(String rechercheMateriel) throws Exception {
+	public List<Materiel> filtrerMateriel(String filtre) throws Exception {
 		List<Materiel> materielFiltre = new ArrayList<Materiel>();
 
 		Materiel materiel;
@@ -54,18 +54,18 @@ public class MaterielDAO {
 					+ "OR code_parc LIKE ? " 
 					+ "OR numero_serie LIKE ? " 
 					+ "OR code_article LIKE ? "
-					+ "OR date_fin_garantie LIKE ? " 
-					+ "OR etat LIKE ?;";
+					+ "OR date_fin_garantie LIKE ?; " ;
+					//+ "OR etat LIKE ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
-			pstmt.setString(1, "%" + rechercheMateriel + "%");
-			pstmt.setString(2, "%" + rechercheMateriel + "%");
-			pstmt.setString(3, "%" + rechercheMateriel + "%");
-			pstmt.setString(4, "%" + rechercheMateriel + "%");
-			pstmt.setString(5, "%" + rechercheMateriel + "%");
-			pstmt.setString(6, "%" + rechercheMateriel + "%");
-			pstmt.setString(7, "%" + rechercheMateriel + "%");
-			pstmt.setString(8, "%" + rechercheMateriel + "%");
-			pstmt.setString(9, "%" + rechercheMateriel + "%");
+			pstmt.setString(1, "%" + filtre + "%");
+			pstmt.setString(2, "%" + filtre + "%");
+			pstmt.setString(3, "%" + filtre + "%");
+			pstmt.setString(4, "%" + filtre + "%");
+			pstmt.setString(5, "%" + filtre + "%");
+			pstmt.setString(6, "%" + filtre + "%");
+			pstmt.setString(7, "%" + filtre + "%");
+			pstmt.setString(8, "%" + filtre + "%");
+			//pstmt.setString(9, "%" + filtre + "%");
 
 			// Log info
 			logSQL(pstmt);
@@ -87,6 +87,8 @@ public class MaterielDAO {
 		return materielFiltre;
 	}
 
+	
+	//TODO get materielNonAffecte
 	/**
 	 * Lier un materiel à un bureau
 	 * 
@@ -162,7 +164,7 @@ public class MaterielDAO {
 
 		// TODO chercher commment importer une enum
 		// TODO penser à rajouter les domaines dans le data.sql après modification
-		materiel.setId_materiel(rs.getLong("id"));
+		materiel.setId_materiel(rs.getLong("id_materiel"));
 		// materiel.setDomaine(rs.getString("domaine"));
 		materiel.setType(rs.getString("type"));
 		materiel.setMarque(rs.getString("marque"));

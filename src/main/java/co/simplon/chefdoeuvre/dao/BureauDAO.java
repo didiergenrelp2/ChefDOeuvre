@@ -88,7 +88,7 @@ public class BureauDAO {
 	 * @return
 	 * @throws Exception
 	 */
-	public List<Materiel> recupererMaterielDuBureau(Long id) throws Exception {
+	public List<Materiel> recupererMaterielDuBureau(Long id_bureau) throws Exception {
 		Materiel materiel;
 		PreparedStatement pstmt = null;
 		ResultSet rs;
@@ -103,7 +103,7 @@ public class BureauDAO {
 					+ "WHERE id_bureau = ?;";
 
 			pstmt = dataSource.getConnection().prepareStatement(sql);
-			pstmt.setLong(1, id);
+			pstmt.setLong(1, id_bureau);
 			// Log info
 			logSQL(pstmt);
 			// Lancement requete
@@ -151,7 +151,7 @@ public class BureauDAO {
 		Materiel materiel = new Materiel();
 
 		// TODO chercher commment importer une enum
-		materiel.setId_materiel(rs.getLong("id"));
+		materiel.setId_materiel(rs.getLong("id_materiel"));
 //		materiel.setDomaine(rs.getString("domaine"));
 		materiel.setType(rs.getString("type"));
 		materiel.setMarque(rs.getString("marque"));

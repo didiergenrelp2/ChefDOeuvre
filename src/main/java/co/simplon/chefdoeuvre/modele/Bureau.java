@@ -15,6 +15,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "bureau")
 public class Bureau {
@@ -35,6 +37,7 @@ public class Bureau {
 	private String telephone;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "bureau")
+	@JsonManagedReference
 	private Set<Materiel> materiel = new HashSet<>();
 
 	public Bureau() {

@@ -2,6 +2,8 @@ package co.simplon.chefdoeuvre.modele;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 //import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
@@ -39,6 +41,7 @@ public class Materiel {
 	private String marque;
 	private String modele;
 	private String numero_serie;
+	@Column(unique=true)
 	private String code_parc;
 	private String code_article;
 	private Date date_fin_garantie;
@@ -60,7 +63,7 @@ public class Materiel {
 	}
 
 	public Materiel(Domaine domaine, String type, String marque, String modele, String numero_serie, String code_parc,
-			String code_article, Date date_fin_garantie, Etat etat) {
+			String code_article, Date date_fin_garantie/*, Etat etat*/) {
 
 		this.domaine = domaine;
 		this.type = type;
@@ -70,7 +73,7 @@ public class Materiel {
 		this.code_parc = code_parc;
 		this.code_article = code_article;
 		this.date_fin_garantie = date_fin_garantie;
-		this.etat = etat;
+		//this.etat = etat;
 
 	}
 

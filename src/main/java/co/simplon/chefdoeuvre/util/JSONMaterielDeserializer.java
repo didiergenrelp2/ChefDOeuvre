@@ -25,10 +25,8 @@ public class JSONMaterielDeserializer extends JsonDeserializer<Materiel> {
 		
 		Materiel materiel = new Materiel();
 		materiel.setId_materiel(jsonNode.get("id_materiel").asLong());
-		String domaineStr = jsonNode.get("domaine").asText();
-		
-		Domaine domaine = Domaine.valueOf(domaineStr);
-		
+		String domaineStr = jsonNode.get("domaine").asText();		
+		Domaine domaine = Domaine.valueOf(domaineStr);		
 		materiel.setDomaine(domaine);
 		materiel.setType(jsonNode.get("type").asText());
 		materiel.setMarque(jsonNode.get("marque").asText());

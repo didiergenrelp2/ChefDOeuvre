@@ -3,6 +3,7 @@ package co.simplon.chefdoeuvre.dao;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,9 @@ public class MaterielDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
 		String sql;
-
+		//TODO corriger probleme tri date
+		SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+		
 		try {
 			// Requete SQL
 			sql = "SELECT * " 
@@ -53,8 +56,8 @@ public class MaterielDAO {
 					+ "OR type LIKE ? " 
 					+ "OR code_parc LIKE ? " 
 					+ "OR numero_serie LIKE ? " 
-					+ "OR code_article LIKE ? "
-					+ "OR date_fin_garantie LIKE ?; " ;
+					+ "OR code_article LIKE ?; ";
+					//+ "OR date_fin_garantie LIKE ?; " ;
 					//+ "OR etat LIKE ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
 			pstmt.setString(1, "%" + filtre + "%");
@@ -64,7 +67,7 @@ public class MaterielDAO {
 			pstmt.setString(5, "%" + filtre + "%");
 			pstmt.setString(6, "%" + filtre + "%");
 			pstmt.setString(7, "%" + filtre + "%");
-			pstmt.setString(8, "%" + filtre + "%");
+		//	pstmt.setString(8,"%" + SDF.parse(filtre) + "%"); 
 			//pstmt.setString(9, "%" + filtre + "%");
 
 			// Log info
@@ -86,9 +89,9 @@ public class MaterielDAO {
 
 		return materielFiltre;
 	}
-
-	
+		
 	//TODO get materielNonAffecte
+	
 	/**
 	 * Lier un materiel à un bureau
 	 * 
@@ -100,7 +103,6 @@ public class MaterielDAO {
 		PreparedStatement pstmt = null;
 		String sql;
 		try {
-
 			// Requete SQL
 			sql = "UPDATE materiel SET id_bureau = ? WHERE id_materiel = ?;";
 			pstmt = dataSource.getConnection().prepareStatement(sql);
@@ -119,6 +121,35 @@ public class MaterielDAO {
 			pstmt.close();
 		}
 	}
+	
+	/**
+	 * Affiche la liste du materiel du bureau
+	 * 
+	 * @param id_bureau
+	 * @throws Exception
+	 */
+	
+		public void listerMaterielDuBureau(long id_bureau) throws Exception {
+			PreparedStatement pstmt = null;
+			String sql;
+			try {
+				// Requete SQL
+				sql = "SELECT * FROM materiel WHERE id_bureau = ?;";
+				pstmt = dataSource.getConnection().prepareStatement(sql);
+				pstmt.setLong(1, id_bureau);
+				// Log info
+				logSQL(pstmt);
+				// Lancement requete
+				pstmt.executeUpdate();
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.error("SQL Error !:" + pstmt.toString(), e);
+				throw e;
+			} finally {
+				pstmt.close();
+			}
+		}	
 
 	/**
 	 * Supprimer le lien entre le materiel et le bureau

@@ -41,7 +41,6 @@ public class Materiel {
 	private String marque;
 	private String modele;
 	private String numero_serie;
-	@Column(unique=true)
 	private String code_parc;
 	private String code_article;
 	private Date date_fin_garantie;
@@ -55,7 +54,7 @@ public class Materiel {
 	private Bureau bureau;
 
 	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "id_utilisateur", nullable = false)
+	// @JoinColumn(name = "id_utilisateur", nullable = true)
 	// private Utilisateur utilisateur;
 
 	public Materiel() {

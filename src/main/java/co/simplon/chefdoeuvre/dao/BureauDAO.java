@@ -1,5 +1,6 @@
 package co.simplon.chefdoeuvre.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import co.simplon.chefdoeuvre.modele.Bureau;
+import co.simplon.chefdoeuvre.modele.Domaine;
 import co.simplon.chefdoeuvre.modele.Materiel;
 
 @Repository
@@ -42,6 +44,7 @@ public class BureauDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
 		String sql;
+		Connection connexion = dataSource.getConnection();
 
 		try {
 			// Requete SQL
@@ -53,7 +56,7 @@ public class BureauDAO {
 					+ "OR code_postal LIKE ? "
 					+ "OR ville LIKE ? "
 					+ "OR telephone LIKE ? ";
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setString(1, "%" + rechercheBureau + "%");
 			pstmt.setString(2, "%" + rechercheBureau + "%");
 			pstmt.setString(3, "%" + rechercheBureau + "%");
@@ -76,6 +79,7 @@ public class BureauDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 
 		return bureauFiltre;
@@ -94,15 +98,15 @@ public class BureauDAO {
 		ResultSet rs;
 		String sql;
 		ArrayList<Materiel> listeMateriel = new ArrayList<Materiel>();
+		Connection connexion = dataSource.getConnection();
 
 		try {
-			// TODO modifier requete
 			// Requete SQL
 			sql = 	"SELECT * " 
 					+ "FROM materiel " 
 					+ "WHERE id_bureau = ?;";
 
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setLong(1, id_bureau);
 			// Log info
 			logSQL(pstmt);
@@ -119,6 +123,7 @@ public class BureauDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 
 		return listeMateriel;
@@ -150,9 +155,8 @@ public class BureauDAO {
 	private Materiel recupererMaterielRS(ResultSet rs) throws SQLException {
 		Materiel materiel = new Materiel();
 
-		// TODO chercher commment importer une enum
 		materiel.setId_materiel(rs.getLong("id_materiel"));
-//		materiel.setDomaine(rs.getString("domaine"));
+		materiel.setDomaine(Domaine.values()[rs.getInt("domaine")]); // Conversion int vers Enum
 		materiel.setType(rs.getString("type"));
 		materiel.setMarque(rs.getString("marque"));
 		materiel.setModele(rs.getString("modele"));

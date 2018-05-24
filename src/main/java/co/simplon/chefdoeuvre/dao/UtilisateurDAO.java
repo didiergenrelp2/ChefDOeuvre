@@ -1,5 +1,6 @@
 package co.simplon.chefdoeuvre.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,6 +41,7 @@ public class UtilisateurDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
 		String sql;
+		Connection connexion = dataSource.getConnection();
 		
 		try {
 			// Requete SQL
@@ -49,7 +51,7 @@ public class UtilisateurDAO {
 					+ "OR prenom LIKE ? "
 					+ "OR idrh LIKE ? "
 					+ "OR fonction LIKE ?;";
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setString(1, "%" + rechercheUtilisateur + "%");
 			pstmt.setString(2, "%" + rechercheUtilisateur + "%");
 			pstmt.setString(3, "%" + rechercheUtilisateur + "%");
@@ -70,6 +72,7 @@ public class UtilisateurDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 
 		return utilisateurFiltre;

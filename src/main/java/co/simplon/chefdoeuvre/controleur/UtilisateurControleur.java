@@ -45,8 +45,8 @@ public class UtilisateurControleur {
 	
 	@PostMapping(path = "/utilisateurs")
 	public ResponseEntity<?> ajouterUtilisateur(@Valid @RequestBody Utilisateur utilisateur) throws Exception {
-		Utilisateur newUser = utilisateurService.ajouterUtilisateur(utilisateur);
-		return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+		Utilisateur nouvelUtilisateur = utilisateurService.ajouterUtilisateur(utilisateur);
+		return ResponseEntity.status(HttpStatus.CREATED).body(nouvelUtilisateur);
 	}
 
 	@PutMapping(path = "/utilisateur/{id}")

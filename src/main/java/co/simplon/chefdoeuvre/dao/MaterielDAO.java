@@ -1,5 +1,6 @@
 package co.simplon.chefdoeuvre.dao;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import co.simplon.chefdoeuvre.modele.Domaine;
 import co.simplon.chefdoeuvre.modele.Materiel;
 
 @Repository
@@ -38,13 +40,14 @@ public class MaterielDAO {
 	 */
 	public List<Materiel> filtrerMateriel(String filtre) throws Exception {
 		List<Materiel> materielFiltre = new ArrayList<Materiel>();
-
+		Connection connexion = dataSource.getConnection();
 		Materiel materiel;
 		PreparedStatement pstmt = null;
 		ResultSet rs;
 		String sql;
 		//TODO corriger probleme tri date
-		SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
+		//TODO corriger probleme tri domaine
+		//SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 		
 		try {
 			// Requete SQL
@@ -59,7 +62,7 @@ public class MaterielDAO {
 					+ "OR code_article LIKE ?; ";
 					//+ "OR date_fin_garantie LIKE ?; " ;
 					//+ "OR etat LIKE ?;";
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setString(1, "%" + filtre + "%");
 			pstmt.setString(2, "%" + filtre + "%");
 			pstmt.setString(3, "%" + filtre + "%");
@@ -68,7 +71,7 @@ public class MaterielDAO {
 			pstmt.setString(6, "%" + filtre + "%");
 			pstmt.setString(7, "%" + filtre + "%");
 		//	pstmt.setString(8,"%" + SDF.parse(filtre) + "%"); 
-			//pstmt.setString(9, "%" + filtre + "%");
+		//  pstmt.setString(9, "%" + filtre + "%");
 
 			// Log info
 			logSQL(pstmt);
@@ -85,6 +88,7 @@ public class MaterielDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 
 		return materielFiltre;
@@ -102,10 +106,11 @@ public class MaterielDAO {
 	public void poserMaterielDansBureau(long id_bureau, long id_materiel) throws Exception {
 		PreparedStatement pstmt = null;
 		String sql;
+		Connection connexion = dataSource.getConnection();
 		try {
 			// Requete SQL
 			sql = "UPDATE materiel SET id_bureau = ? WHERE id_materiel = ?;";
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setLong(1, id_bureau);
 			pstmt.setLong(2, id_materiel);
 			// Log info
@@ -119,6 +124,7 @@ public class MaterielDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 	}
 	
@@ -127,45 +133,54 @@ public class MaterielDAO {
 	 * 
 	 * @param id_bureau
 	 * @throws Exception
-	 */
-	
-		public void listerMaterielDuBureau(long id_bureau) throws Exception {
+	 */	
+		public List<Materiel> listerMaterielDuBureau(long id_bureau) throws Exception {
+			Connection connexion = dataSource.getConnection();
 			PreparedStatement pstmt = null;
+			ResultSet rs;
 			String sql;
+			Materiel materiel = new Materiel();
+			List<Materiel> listeMateriel = new ArrayList<Materiel>();
 			try {
 				// Requete SQL
 				sql = "SELECT * FROM materiel WHERE id_bureau = ?;";
-				pstmt = dataSource.getConnection().prepareStatement(sql);
+				pstmt = connexion.prepareStatement(sql);
 				pstmt.setLong(1, id_bureau);
 				// Log info
 				logSQL(pstmt);
 				// Lancement requete
-				pstmt.executeUpdate();
-				
+				rs = pstmt.executeQuery();
+				// resultat requete
+				while (rs.next()) {
+					materiel = recupererMaterielRS(rs);
+					listeMateriel.add(materiel);
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.error("SQL Error !:" + pstmt.toString(), e);
 				throw e;
 			} finally {
 				pstmt.close();
+				connexion.close();
 			}
+			return listeMateriel;
 		}	
 
 	/**
-	 * Supprimer le lien entre le materiel et le bureau
+	 * Retire le matériel du bureau en passant materiel.id_bureau à null
 	 * 
 	 * @param id_bureau
 	 * @param id_materiel
 	 * @throws Exception
 	 */
-	public void supprimerMaterielDuBureau(long id_bureau, long id_materiel) throws Exception {
+	public void retirerMaterielDuBureau(long id_bureau, long id_materiel) throws Exception {
 		PreparedStatement pstmt = null;
 		String sql;
-
+		Connection connexion = dataSource.getConnection();
 		try {
 			// Requete SQL
 			sql = "UPDATE materiel SET id_bureau = null WHERE id_materiel = ?;";
-			pstmt = dataSource.getConnection().prepareStatement(sql);
+			pstmt = connexion.prepareStatement(sql);
 			pstmt.setLong(1, id_materiel);
 			// Execution requete
 			int resultat = pstmt.executeUpdate();
@@ -181,6 +196,7 @@ public class MaterielDAO {
 			throw e;
 		} finally {
 			pstmt.close();
+			connexion.close();
 		}
 	}
 
@@ -193,10 +209,8 @@ public class MaterielDAO {
 	private Materiel recupererMaterielRS(ResultSet rs) throws SQLException {
 		Materiel materiel = new Materiel();
 
-		// TODO chercher commment importer une enum
-		// TODO penser à rajouter les domaines dans le data.sql après modification
 		materiel.setId_materiel(rs.getLong("id_materiel"));
-		// materiel.setDomaine(rs.getString("domaine"));
+		materiel.setDomaine(Domaine.values()[rs.getInt("domaine")]); // Conversion int vers Enum
 		materiel.setType(rs.getString("type"));
 		materiel.setMarque(rs.getString("marque"));
 		materiel.setModele(rs.getString("modele"));

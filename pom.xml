@@ -9,7 +9,7 @@
 	<packaging>jar</packaging>
 
 	<name>ChefDOeuvre</name>
-	<description>Demo project for Spring Boot</description>
+	<description>Gestion de stock</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

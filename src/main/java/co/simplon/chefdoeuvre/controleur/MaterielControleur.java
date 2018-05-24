@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.simplon.chefdoeuvre.dao.MaterielDAO;
-import co.simplon.chefdoeuvre.modele.Bureau;
 import co.simplon.chefdoeuvre.modele.Materiel;
 import co.simplon.chefdoeuvre.service.MaterielService;
 
@@ -74,9 +73,9 @@ public class MaterielControleur {
 	// INSERT IGNORE INTO materiel (`id_materiel`,`domaine`, `type`, `marque`,
 	// `modele`, `numero_serie`, `code_parc`, `code_article`, `date_fin_garantie`)
 	// VALUES ('2', 'Réseaux', 'routeur', '3COM', 'ER25', '65433HY8', 'B32154',
-	// '234321','2015-04-12 19:05:00');
+	// '234321','2015-04-12');
 	@PostMapping(path = "/materiels")
-	Materiel ajouterMateriel(@Valid @RequestBody Materiel materiel) throws Exception {
+	public Materiel ajouterMateriel(@Valid @RequestBody Materiel materiel) throws Exception {
 		return materielService.ajouterMateriel(materiel);
 	}
 
@@ -121,15 +120,14 @@ public class MaterielControleur {
 	}
 
 	/**
-	 * Lier le materiel au bureau
+	 * Poser le materiel dans le bureau en modifiant materiel.id_bureau
 	 * 
 	 * @param bureau
 	 * @return
 	 * @throws Exception
 	 */
-	// TODO lier le matos a la table bureau
 	@PutMapping(path = "/bureau/{id_bureau}/poserMateriel")
-	ResponseEntity<?> poserMaterielDansBureau(@PathVariable ("id_bureau") Long id_bureau, @Valid @RequestBody Long id_materiel)
+	ResponseEntity<?> poserMaterielDansBureau(@PathVariable (value ="id_bureau") long id_bureau, @Valid @RequestBody Long id_materiel)
 			throws Exception {
 		try {
 			materielDAO.poserMaterielDansBureau(id_bureau, id_materiel);
@@ -140,7 +138,12 @@ public class MaterielControleur {
 		return ResponseEntity.status(HttpStatus.OK).body(null);
 
 	}
-
+	
+	@GetMapping(path = "/bureau/{id_bureau}/listeMateriel")	
+	ResponseEntity<?> listerMaterielDuBureau(@PathVariable(value = "id_bureau") long id_bureau) throws Exception {
+		List<Materiel> listeMateriel = materielDAO.listerMaterielDuBureau(id_bureau);
+		return ResponseEntity.ok().body(listeMateriel);
+	}
 	/**
 	 * Supprimer un materiel du bureau
 	 * 
@@ -149,12 +152,12 @@ public class MaterielControleur {
 	 * @return
 	 * @throws Exception
 	 */
-	// TODO possible en mettant une fenetre de demande de confirmation ?
 	@PutMapping(path = "/bureau/{id_bureau}/retirerMateriel/{id_materiel}")
-	public ResponseEntity<?> supprimerMaterielDuBureau(@PathVariable(value = "id_bureau") long id_bureau,
+	public ResponseEntity<?> retirerMaterielDuBureau(
+			@PathVariable(value = "id_bureau") long id_bureau,
 			@PathVariable(value = "id_materiel") long id_materiel) throws Exception {
 		try {
-			materielDAO.supprimerMaterielDuBureau(id_bureau, id_materiel);
+			materielDAO.retirerMaterielDuBureau(id_bureau, id_materiel);
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
@@ -165,7 +168,7 @@ public class MaterielControleur {
 	// exemple en SQL :
 	// DELETE FROM materiel WHERE id_materiel=3;
 	@DeleteMapping(path = "/materiel/{id}")
-	ResponseEntity<Materiel> supprimerMateriel(@PathVariable(value = "id") long id_materiel) throws Exception {
+	public ResponseEntity<Materiel> supprimerMateriel(@PathVariable(value = "id") long id_materiel) throws Exception {
 		Materiel materiel = materielService.recupererMateriel(id_materiel);
 		if (materiel == null)
 			return ResponseEntity.notFound().build();

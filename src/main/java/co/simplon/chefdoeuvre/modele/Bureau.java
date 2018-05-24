@@ -28,6 +28,7 @@ public class Bureau {
 	@Column(unique = true)
 	private String nom_bureau;
 	@Size(max = 6)
+	@Column(unique=true)
 	private Long code_regate;
 	private String adresse;
 	@Size(max = 5)

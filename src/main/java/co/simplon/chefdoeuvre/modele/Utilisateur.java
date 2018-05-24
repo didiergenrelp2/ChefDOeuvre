@@ -1,5 +1,6 @@
 package co.simplon.chefdoeuvre.modele;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -19,6 +20,7 @@ public class Utilisateur {
 	@NotNull
 	private String nom;
 	private String prenom;
+	@Column(unique=true)
 	private String idrh;
 	private Fonction fonction;
 	private String mdp;

@@ -20,7 +20,7 @@ import co.simplon.chefdoeuvre.modele.Utilisateur;
 import co.simplon.chefdoeuvre.service.UtilisateurService;
 @RunWith(SpringRunner.class)
 @WebMvcTest(value=UtilisateurControleur.class, secure=false)
-public class TestUtilisateurCrud {
+public class UtilisateurGetTest {
 	@Autowired
 	private MockMvc mockMvc;
 	

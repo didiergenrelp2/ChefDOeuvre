@@ -3,8 +3,6 @@ package co.simplon.chefdoeuvre.ChefDOeuvre;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.concurrent.ExecutionException;
-
 import javax.transaction.Transactional;
 
 import org.junit.BeforeClass;
@@ -16,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import co.simplon.chefdoeuvre.ChefDOeuvreApplication;
 import co.simplon.chefdoeuvre.controleur.MaterielControleur;
 import co.simplon.chefdoeuvre.depot.MaterielDepot;
 import co.simplon.chefdoeuvre.modele.Materiel;
@@ -24,12 +23,12 @@ import co.simplon.chefdoeuvre.service.MaterielService;
 @Transactional
 @Rollback(true)
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = ChefDOeuvreApplicationTests.class)
+@SpringBootTest(classes = ChefDOeuvreApplication.class)
 public class MaterielCrudTest {
 	static Materiel materiel;
 	static Materiel materielMaj;
 	static MaterielService materielService;
-	static Materiel nouveauMateriel;
+	static ResponseEntity<Materiel> nouveauMateriel;
 	static ResponseEntity<Materiel> materielSupprime;
 
 	@Autowired
@@ -45,7 +44,7 @@ public class MaterielCrudTest {
 	@Test
 	public void testAjouterMateriel() {
 		try {
-			materiel = creationMock("Lenovo", "PC");
+			materiel = creationMaterielTest("Lenovo", "PC");
 			nouveauMateriel = materielControleur.ajouterMateriel(materiel);
 		}
 		catch (Exception e) {
@@ -57,7 +56,7 @@ public class MaterielCrudTest {
 	@Test
 	public void testMajMateriel() {
 		materielMaj = null;
-		materiel = creationMock("Lenovo", "PC");
+		materiel = creationMaterielTest("Lenovo", "PC");
 		try {
 			materielMaj = materielDepot.save(materiel);
 		} catch (Exception e) {
@@ -68,23 +67,23 @@ public class MaterielCrudTest {
 		assertEquals("PC", materielMaj.getType());
 	}
 	
-//	@Test
-//	public void testSupprimerMateriel() {
-//		try {
-//			materiel = creationMock("Lenovo", "PC");
-//			materielSupprime = materielControleur.ajouterMateriel(materiel);
-//			materielSupprime = materielControleur.supprimerMateriel((long) 1);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//		assertTrue(materielSupprime.getBody() == null);
-//	}
+	@Test
+	public void testSupprimerMateriel() {
+		try {
+			materiel = creationMaterielTest("Lenovo", "PC");
+			materielSupprime = materielControleur.ajouterMateriel(materiel);
+			materielSupprime = materielControleur.supprimerMateriel((long) 1);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		assertTrue(materielSupprime.getBody() == null);
+	}
 	
-	private Materiel creationMock(String marque, String type) {
-		Materiel mock = new Materiel();
-		mock.setMarque(marque);
-		mock.setType(type);
-		mock.setId_materiel(new Long(1));
-		return mock;
+	private Materiel creationMaterielTest(String marque, String type) {
+		Materiel materielTest = new Materiel();
+		materielTest.setMarque(marque);
+		materielTest.setType(type);
+		materielTest.setId_materiel(new Long(1));
+		return materielTest;
 	}
 }

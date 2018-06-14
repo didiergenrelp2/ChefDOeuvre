@@ -70,13 +70,14 @@ public class MaterielControleur {
 	}
 
 	// exemple en SQL :
-	// INSERT IGNORE INTO materiel (`id_materiel`,`domaine`, `type`, `marque`,
+	// INSERT INTO materiel (`id_materiel`,`domaine`, `type`, `marque`,
 	// `modele`, `numero_serie`, `code_parc`, `code_article`, `date_fin_garantie`)
 	// VALUES ('2', 'Réseaux', 'routeur', '3COM', 'ER25', '65433HY8', 'B32154',
 	// '234321','2015-04-12');
 	@PostMapping(path = "/materiels")
-	public Materiel ajouterMateriel(@Valid @RequestBody Materiel materiel) throws Exception {
-		return materielService.ajouterMateriel(materiel);
+	public ResponseEntity<Materiel> ajouterMateriel(@Valid @RequestBody Materiel materiel) throws Exception {
+		Materiel materielAjoute = materielService.ajouterMateriel(materiel);
+		return ResponseEntity.ok(materielAjoute);
 	}
 
 	// exemple en SQL :

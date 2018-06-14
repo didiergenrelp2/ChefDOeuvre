@@ -41,6 +41,7 @@ public class Materiel {
 	private String marque;
 	private String modele;
 	private String numero_serie;
+	@Column(unique =  true)
 	private String code_parc;
 	private String code_article;
 	private Date date_fin_garantie;

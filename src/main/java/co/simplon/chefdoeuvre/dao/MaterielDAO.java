@@ -45,8 +45,6 @@ public class MaterielDAO {
 		PreparedStatement pstmt = null;
 		ResultSet rs;
 		String sql;
-		//TODO corriger probleme tri date
-		//TODO corriger probleme tri domaine
 		//SimpleDateFormat SDF = new SimpleDateFormat("yyyy-MM-dd");
 		
 		try {
